@@ -12,17 +12,21 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.mapping.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = User.TABLE_NAME)
 public class User {
 
-    public interface CreateUser {}
-    public interface UpdateUser {}
+    public interface CreateUser {
+    }
+
+    public interface UpdateUser {
+    }
 
     public static final String TABLE_NAME = "user";
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,20 +36,20 @@ public class User {
     @Column(name = "username", length = 100, nullable = false, unique = true)
     @NotNull(groups = CreateUser.class)
     @NotEmpty(groups = CreateUser.class)
-    @Size(groups = CreateUser.class , min = 2, max = 100)
+    @Size(groups = CreateUser.class, min = 2, max = 100)
     private String username;
 
+    @JsonProperty(access = Access.WRITE_ONLY)
     @Column(name = "password", length = 60, nullable = false)
-    @NotNull(groups = { CreateUser.class, UpdateUser.class } )
-    @NotEmpty(groups = { CreateUser.class, UpdateUser.class } )
-    @Size(groups = { CreateUser.class, UpdateUser.class },min = 8, max = 60)
+    @NotNull(groups = { CreateUser.class, UpdateUser.class })
+    @NotEmpty(groups = { CreateUser.class, UpdateUser.class })
+    @Size(groups = { CreateUser.class, UpdateUser.class }, min = 8, max = 60)
     private String password;
 
+    // private List<Task> tasks = new ArrayList<Task>();
 
-   // private List<Task> tasks = new ArrayList<Task>();
-
-
-    public User (){ }
+    public User() {
+    }
 
     public User(Long id, String username, String password) {
         this.id = id;
@@ -53,26 +57,26 @@ public class User {
         this.password = password;
     }
 
-
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
 
-
     public String getUsername() {
         return username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
 
-
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -91,17 +95,16 @@ public class User {
             return true;
         if (obj == null)
             return false;
-        if (! obj instanceof User)
+        if (!(obj instanceof User))
             return false;
         User other = (User) obj;
         if (this.id == null) {
             if (other.id != null)
-                return false; }
-            else if (!this.id.equals(other.id))
                 return false;
-        return Object.equals(this.id, other.id) && Object.equals(this.username, other.username)
-        && Objects.equals(this.password, other.password);
+        } else if (!this.id.equals(other.id))
+            return false;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.username, other.username)
+                && Objects.equals(this.password, other.password);
     }
-   
-    
+
 }
